@@ -16,7 +16,8 @@
  */
 /**
  Comentarios:
-   - Código refinado: Se han reemplazado las texturas por imágenes.
+   - Funcionalidad de matar monstruitos.
+   - Reaparecen en otro sitio aleatoriamente.
  */
  
 // Include statements for the library
@@ -87,7 +88,7 @@ public void draw(){
   //drawAllPoints();
   //drawWiimote();
   isZooming();
-  //isShooting(XY);
+  isShooting(ANM_POS_XY.x, ANM_POS_XY.y);
 }
 
 /*
@@ -286,24 +287,6 @@ private void drawWiimote(){
   box(50, 25, 100);    
 }
 
-private void isShooting(PVector XY){
-  if(BUTT.isB()){
-    if(containsPOV(XY)){
-    RND_ANM_POS = generateRandomPos();
-    }
-    BUTT.setB(false);
-  }
-}
-
-private boolean containsPOV(PVector XY){
- boolean isContained = false;
- //if (POV.x >= -anm_pos+XY.x+RANDOM_XY.x & POV.x <= anm_pos+XY.x+RANDOM_XY.x
- //    & POV.y >= -anm_pos+XY.y+RANDOM_XY.y & POV.y <= anm_pos+XY.y+RANDOM_XY.y){
- //  isContained = true;
- //}
- return isContained;
-}
-
 /**
   Generates random coordinates to randomise positioning of animation.
  */
@@ -318,4 +301,28 @@ private PVector generateRandomPos(){
  */
 private float posPhase(float var){
   return var - PHASE;
+}
+
+private void isShooting(float x, float y){
+  if(BUTT.isB()){
+    stroke(256, 256, 256); // Green
+    strokeWeight(20);
+    point(POV.x, POV.y);
+    if(containsPOV(x, y)){
+      RND_ANM_POS = generateRandomPos();
+    }
+    BUTT.setB(false);
+  }
+}
+
+private boolean containsPOV(float x, float y){
+ boolean isContained = false;
+ if((POV.x >= x-imgs[0].width/2 && POV.x <= x+imgs[0].width/2) && 
+     (POV.y >= y-imgs[0].height/2 && POV.y <= y+imgs[0].height/2)){
+       stroke(256, 0, 0); // Green
+       strokeWeight(20);
+       point(POV.x, POV.y);
+       isContained = true;
+ }
+ return isContained;
 }
