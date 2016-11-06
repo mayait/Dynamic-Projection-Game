@@ -45,10 +45,10 @@
 
 - - - -  
 
-### Licence
-MIT License
+### MIT License
 
-Copyright (c) 2016 Marín, Guillermo. Maya, Julián. Santos, Maria. Universitat Pompeu Fabra. Barcelona.
+Copyright (c) 2016 Marín, Guillermo. Maya, Julián. Santos, Maria. 
+_Universitat Pompeu Fabra, Barcelona._
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
