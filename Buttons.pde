@@ -2,18 +2,20 @@
 public class Buttons{
   
   //Variables
-  private boolean A, minus, plus;
+  private boolean A, B, minus, plus;
   
   //Constructor
   public Buttons(){
     A = false;
+    B = false;
     minus = false;
     plus = false;
   }
   
   //Constructor
-  public Buttons(boolean A_, boolean minus_, boolean plus_){
+  public Buttons(boolean A_, boolean B_, boolean minus_, boolean plus_){
     A = A_;
+    B = B_;
     minus = minus_;
     plus = plus_;
   }
@@ -24,6 +26,14 @@ public class Buttons{
   
   public void setA(boolean A_) {
     A = A_;
+  }
+  
+  public boolean isB() {
+   return B;
+  }
+  
+  public void setB(boolean B_) {
+    B = B_;
   }
   
   public boolean isMinus() {

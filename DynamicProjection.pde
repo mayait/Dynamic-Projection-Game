@@ -16,10 +16,7 @@
  */
 /**
  Comentarios:
-   - Animación integrada
-   - Target integrado
-   - Background integrado
-   - Campo de exploración ampliado
+   - Código refinado: Se han reemplazado las texturas por imágenes.
  */
  
 // Include statements for the library
@@ -30,23 +27,24 @@ import netP5.*;
 OscP5 oscP5;
 OscMessage theOscMessage;
 NetAddress myRemoteLocation;
-IRCoordinates IRC;
-Accelerometer ACC;
-Buttons BUTT;
-int camZ, frame;
-PImage bgImg, trg;
-PImage[] imgs;
-PVector POV;
-float theta;
+IRCoordinates IRC = new IRCoordinates();
+Accelerometer ACC = new Accelerometer();
+Buttons BUTT = new Buttons();
+PImage[] imgs = new PImage[4];
+PImage bgImg, trg, bgImg2;
+PVector POV, RND_ANM_POS;
+//Adaptation
+float angle = 0.5, speed = 0.1;
+int cam_z = 800, scalar = 50, imgsIndex = 0;
 
 // Declare constants
-public static final int IMG_WIDTH = 50;
-public static final int IMG_HEIGHT = 50;
+public static final int IMG_WIDTH = 100;
+public static final int IMG_HEIGHT = 100;
 public static final int FR = 20;
 public static final int PORT = 9000;
 public static final int OSCL = 50;
-public static final int OSCL_X =50;
-public static final int OSCL_Y = 55;
+public static final float PHASE = 100;
+public static final int ZOOM = 10;
 
 // Sets the initial conditions
 public void setup(){
@@ -61,15 +59,8 @@ public void setup(){
   noFill();
   // The oscP5 client will be on this computer, port 9000.
   oscP5 = new OscP5(this, PORT);
-  IRC = new IRCoordinates();
-  ACC = new Accelerometer();
-  BUTT = new Buttons();
-  imgs = new PImage[4];
-  camZ = 800;
-  frame = 0;
-  theta = 0;
-  bgImg = loadImage("images/haunted_house3.jpg");
-  trg = loadImage("images/target.png");
+  loadImages();
+  RND_ANM_POS = generateRandomPos();
 }
 
 public void draw(){
@@ -77,28 +68,26 @@ public void draw(){
   // draw() otherwise the previous image would still 
   // be displayed.
   background(0); 
-  // Loads the animation images into the variable img.
-  loadImages();
   // Disables drawing the stroke (outline). 
   noStroke();
   // Sets the default ambient and directional light.
   lights();
-  // Zoom depending of buttons + and -.
-  zoom();
   // Sets the position of the camera through setting the eye 
   // position, the center of the scene, and which axis is facing 
   // upward.
   normalisePOV();
-  camera(POV.x, POV.y, camZ,
+  camera(POV.x, POV.y, cam_z,
          POV.x, POV.y, 0.0,
          0.0, 1.0, 0.0);
   
-  PVector XY = generateOscilation();
-  texturiseBgImage(bgImg);
-  texturiseImages(imgs, XY);
-  texturiseTarget(trg);
+  printBgImage();
+  PVector ANM_POS_XY = generateMotion();
+  printAnimation(ANM_POS_XY.x, ANM_POS_XY.y);
+  printTarget(trg);
   //drawAllPoints();
   //drawWiimote();
+  isZooming();
+  //isShooting(XY);
 }
 
 /*
@@ -146,6 +135,10 @@ private void readBUTT(OscMessage theOscMessage){
      BUTT.setA(true);
   }
   
+  if( theOscMessage.addrPattern().indexOf("/wii/1/button/B") != -1){
+     BUTT.setB(true);
+  }
+  
   if( theOscMessage.addrPattern().indexOf("/wii/1/button/Minus") != -1){
      BUTT.setMinus(true);
   }
@@ -172,8 +165,12 @@ private void readACC(OscMessage theOscMessage){
      ACC.setZ(theOscMessage.get(2).floatValue());
   }
 }
-
+/**
+  Loads and resises the animation images into the variable imgs.
+ */
 private void loadImages(){
+  bgImg = loadImage("images/haunted_house3.jpg");
+  trg = loadImage("images/target.png");
   imgs [0] = loadImage("cubic_0003.gif");
   imgs [1] = loadImage("cubic_0004.gif");
   imgs [2] = loadImage("cubic_0005.gif");
@@ -185,49 +182,36 @@ private void loadImages(){
 }
 
 /**
-  Loads image sequences and generates oscilation values.
+  Generates oscilation motion values.
  */
-private PVector generateOscilation(){
-  frame = (frame+1) % 4;
-  theta += 0.1;
-  return new PVector((sin(theta)) * OSCL, (cos(theta)) * OSCL);  
-}
-
-/**
-  Renders target image.
- */
-private void texturiseTarget(PImage trg){
-  trg.resize(50, 50);
-  image(trg, POV.x - trg.width/2, POV.y - trg.height/2);
+private PVector generateMotion(){
+  angle += speed;
+  return new PVector(RND_ANM_POS.x + sin(angle) * scalar, 
+                    RND_ANM_POS.y + cos(angle) * scalar);
 }
 
 /**
   Renders background image.
  */
-private void texturiseBgImage(PImage bgImg){
-  beginShape();
-  texture(bgImg);
-  vertex(-width, -height, 0, 0, 0);
-  vertex(width, -height, 0, bgImg.width, 0);
-  vertex(width, height, 0, bgImg.width, bgImg.height);
-  vertex(-width, height, 0, 0, bgImg.height);
-  endShape();
+private void printBgImage(){
+  bgImg.resize(width*2, height*2);
+  image(bgImg, -width, -height);
 }
 
 /**
-  Renders animation.
+  Renders the animation in motion depending of X and Y.
  */
-private void texturiseImages(PImage[] img, PVector XY){
-  // beginShape() begins recording vertices for a shape.
-  beginShape();
-  // Sets a texture to be applied to vertex points.
-  texture(imgs[frame]);
-  vertex(-OSCL_X+XY.x, OSCL_Y-XY.y, 0, 0, IMG_HEIGHT);
-  vertex(OSCL_X+XY.x, OSCL_Y-XY.y, 0, IMG_WIDTH, IMG_HEIGHT);
-  vertex(OSCL_X+XY.x, -OSCL_Y-XY.y, 0, IMG_WIDTH, 0);
-  vertex(-OSCL_X+XY.x, -OSCL_Y-XY.y, 0, 0, 0);
-  // endShape() stops recording vertices for a shape.
-  endShape();
+private void printAnimation(float x, float y){
+  imgsIndex = (imgsIndex + 1) % imgs.length;
+  image(imgs[imgsIndex], x-imgs[0].width/2, y-imgs[0].height/2);
+}
+
+/**
+  Renders target image.
+ */
+private void printTarget(PImage trg){
+  trg.resize(50, 50);
+  image(trg, POV.x - trg.width/2, POV.y - trg.height/2);
 }
 
 /**
@@ -243,13 +227,13 @@ private void normalisePOV(){
     - Less zoom means the distance is larger.
     - More zoom means the distance is shorter.
  */
-private void zoom(){
+private void isZooming(){
   if(BUTT.isMinus()){
-    camZ = camZ+10;
+    cam_z = cam_z+ZOOM;
     BUTT.setMinus(false);
   }  
   if(BUTT.isPlus()){
-    camZ = camZ-10;
+    cam_z = cam_z-ZOOM;
     BUTT.setPlus(false);
   }
 }
@@ -300,4 +284,38 @@ private void drawWiimote(){
   // h = dimension of the box in the y-dimension
   // d = dimension of the box in the z-dimension
   box(50, 25, 100);    
+}
+
+private void isShooting(PVector XY){
+  if(BUTT.isB()){
+    if(containsPOV(XY)){
+    RND_ANM_POS = generateRandomPos();
+    }
+    BUTT.setB(false);
+  }
+}
+
+private boolean containsPOV(PVector XY){
+ boolean isContained = false;
+ //if (POV.x >= -anm_pos+XY.x+RANDOM_XY.x & POV.x <= anm_pos+XY.x+RANDOM_XY.x
+ //    & POV.y >= -anm_pos+XY.y+RANDOM_XY.y & POV.y <= anm_pos+XY.y+RANDOM_XY.y){
+ //  isContained = true;
+ //}
+ return isContained;
+}
+
+/**
+  Generates random coordinates to randomise positioning of animation.
+ */
+private PVector generateRandomPos(){
+  return new PVector(random(-posPhase(width), posPhase(width)), 
+                    random(-posPhase(height), posPhase(height)));
+}
+
+/**
+  Reduces the range of the original screen size to avoid overflow of 
+  animation when randomising is.
+ */
+private float posPhase(float var){
+  return var - PHASE;
 }
