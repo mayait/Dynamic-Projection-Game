@@ -27,8 +27,6 @@ Thus, the game made in Processing makes a constant mapping between the real worl
 
 ![concept](https://github.com/mayait/Dynamic-Projection-Game-Processing/blob/master/images/readme/game_schema.png)
 
-- - - -  
-
 ##  Requirements
 
 * Processing 3.2.2 		
@@ -40,7 +38,6 @@ Thus, the game made in Processing makes a constant mapping between the real worl
   https://osculator.net/						
   OSX Wiimote - OSC mesage Broker
 
-- - - -  
 
 ###  Get Started
 
@@ -57,6 +54,8 @@ Thus, the game made in Processing makes a constant mapping between the real worl
  By default it runs full screen in a second display, you can change this behavior searching the line fullScreen(P3D, 1);
 7. Have fun, fork it
 8. Game arts and animation sprites sources are included in .psd photohop files in /images/invader/masters/*.psd
+
+- - - -  
 
 #  Authors
 
