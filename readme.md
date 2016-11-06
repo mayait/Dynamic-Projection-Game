@@ -10,9 +10,9 @@
 * _Maria Santos_ msantosbaranco@gmail.com 
 * _Guillermo Marin_ guillermo.marin.g@gmail.com  
 
-#### Acknowledgements
+##### Acknowledgements
 
-* Martí Sànchez. (Advanced Interface Design Prof.)
+* Martí Sànchez.
 * Universitat Pompeu Fabra, Barcelona. _Department of Information and Communication Technologies_ https://www.upf.edu/csim/
 
 - - - -  
