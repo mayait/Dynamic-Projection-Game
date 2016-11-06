@@ -4,7 +4,7 @@ Dynamic Projection Game
 
 ## Prototype concept game using small projectors Processing, wiimote and OSC
 
-[[https://github.com/mayait/Dynamic-Projection-Game-Processing/blob/master/images/readme/childs_projecting.png|alt=KidsProjecting]]
+![Kidsprojecting](https://github.com/mayait/Dynamic-Projection-Game-Processing/blob/master/images/readme/childs_projecting.png)
 
 ===
 Authors:
