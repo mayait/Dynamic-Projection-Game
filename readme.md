@@ -25,18 +25,16 @@ Julian Maya julian.maya@gmail.com, Maria Santos msantosbaranco@gmail.com & Guill
   - - - -  
 ###  Get Started
 
-1. Install requirements
 
-
-
-/images/invader/masters
-has the .psd photohop files for the animation sprites.
-
-
- // Raw IR (x, y, size / 4 tracked dots). These are the values as 
-  // given by the built-in infrared camera. The Wiimote can track 
-  // up to 4 dots. Their x, y coordinates are reported as well as 
-  // the sizes of the dots.
-  // x and y are in a range of 0 to 1. Given that we want a Cartesian
-  // place, we substract 0.5 in order to center de image and have a
-  // range of -0.5 to 0.5.
+1. Clone or download github master
+2. Install requirements
+3. Create infra-red light emitter. You can use the wii sensor bar as well
+  You need at least two IR emitter spots on the wall, we made two ligh spots with four IR led each one. Each spot was separated 20cm.
+  wiimote built-in infrared camera track x,y position of up to 4 IR light blobs and report its coordenates in X,Y  
+  ![wiisensor](https://github.com/mayait/Dynamic-Projection-Game-Processing/blob/master/images/readme/wiisensor.png)
+4. Pair wiimote with Osculator
+5. Load osculator config file /OSCulator_Presets.oscd (just double click it)
+6. Open DynamicProjection.pde file on processing
+	By default it runs full screen in a second display, you can change this behavior searching the line fullScreen(P3D, 1);
+7. Have fun, fork it
+8. Arts of the game included in .psd photohop files for the animation sprites in /images/invader/masters/*psd
