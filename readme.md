@@ -5,9 +5,9 @@
 - - - -
 
 ###  Authors: ###
-* __Julian Maya julian.maya@gmail.com__
-* __Maria Santos msantosbaranco@gmail.com __
-* __Guillermo Marin guillermo.marin.g@gmail.com__
+* _Julian Maya_ julian.maya@gmail.com
+* _Maria Santos_ msantosbaranco@gmail.com 
+* _Guillermo Marin_ guillermo.marin.g@gmail.com
 - - - -
 ###  Requirements: 
 
