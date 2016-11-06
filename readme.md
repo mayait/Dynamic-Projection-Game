@@ -23,7 +23,7 @@ This is a visual search-task shooter game where the user has to explore a hidden
 This software is a proof of concept prototype of an interface for augmented reality paradigm named the world as a support WaS. Where the user uses the surface of the real world (wall) to explore and reveal a virtual environment by the projection.
 ![concept](https://github.com/mayait/Dynamic-Projection-Game-Processing/blob/master/images/readme/game_concept.png)
 Invisible infrared markers are set in the projection surface and its position is captured by a sensor system which permanently communicates this coordinates to the game system. 
-![markers](https://github.com/mayait/Dynamic-Projection-Game-Processing/blob/master/images/readme/game_markers.png)
+![markers](https://github.com/mayait/Dynamic-Projection-Game-Processing/blob/master/images/readme/markers.png)
 Thus, the game made in Processing makes a constant mapping between the real world and a virtual 3D environment allowing the projection image change depending on the angle and distance of projection from the wall. In other words, moving the projector in the real world is also moving the point of view in the virtual environment, so the effect in the user is that is exploring a hidden world behind the wall. 
 ![concept](https://github.com/mayait/Dynamic-Projection-Game-Processing/blob/master/images/readme/game_schema.png)
 
