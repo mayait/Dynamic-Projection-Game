@@ -4,11 +4,12 @@
 ![Kidsprojecting](https://github.com/mayait/Dynamic-Projection-Game-Processing/blob/master/images/readme/childs_projecting.png)
 - - - -
 
-###  Authors:
+###  Authors
 
-Julian Maya julian.maya@gmail.com, Maria Santos msantosbaranco@gmail.com & Guillermo Marin guillermo.marin.g@gmail.com
-  - - - -  
-###  Requirements: 
+* _Julian Maya_ julian.maya@gmail.com
+* _Maria Santos_ msantosbaranco@gmail.com 
+* _Guillermo Marin_ guillermo.marin.g@gmail.com  - - - -  
+###  Requirements
 
 * Processing 3.2.2 		
   https://processing.org/	
