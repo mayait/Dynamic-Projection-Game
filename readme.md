@@ -6,7 +6,7 @@
 
 ###  Authors: ###
 Julian Maya julian.maya@gmail.com, Maria Santos msantosbaranco@gmail.com & Guillermo Marin guillermo.marin.g@gmail.com
-===
+- - - -
 ###  Requirements: 
 
 * Processing 3.2.2 		
