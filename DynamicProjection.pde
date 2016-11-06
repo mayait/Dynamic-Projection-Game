@@ -17,9 +17,8 @@
 
 /**
  Comentarios:
-   - Código adaptado. 
-   - Rotación de la wii box fixed.
-   - Modificado el tamaño de imagen para evitar que se exapanda.
+   - Modificada la posición de la cámara para que coincida con
+     el POV del wiimote.
  */
  
 // Include statements for the library
@@ -79,7 +78,7 @@ public void draw(){
   // Sets the position of the camera through setting the eye 
   // position, the center of the scene, and which axis is facing 
   // upward.
-  camera(0.0, 0.0, camZ,
+  camera(IRC.getIRAux().x * width, IRC.getIRAux().y * height, camZ,
          IRC.getIRAux().x * width, IRC.getIRAux().y * height, 0.0,
          0.0, 1.0, 0.0);
 
@@ -193,8 +192,8 @@ private void drawPoint (String s, float x, float y, int i){
   // Draws a point, a coordinate in space at the dimension of one 
   // pixel. 
   point(x * width, y * height);
-  textSize(32);
-  text(s+" \t x:"+x+"\t y:"+y, 200, i*50-200);
+  //textSize(32);
+  //text(s+" \t x:"+x+"\t y:"+y, 200, i*50-200);
 }
 
 private void drawAllPoints(){
