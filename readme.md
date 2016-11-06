@@ -7,7 +7,7 @@
 ###  Authors:
 
 Julian Maya julian.maya@gmail.com, Maria Santos msantosbaranco@gmail.com & Guillermo Marin guillermo.marin.g@gmail.com
-===
+  - - - -  
 ###  Requirements: 
 
 * Processing 3.2.2 		
@@ -20,11 +20,8 @@ Julian Maya julian.maya@gmail.com, Maria Santos msantosbaranco@gmail.com & Guill
 * OSculator 3.0			
   https://osculator.net/						
   OSX Wiimote - OSC mesage Broker
-  
-  
   - - - -  
 ###  Get Started
-
 
 1. Clone or download github master
 2. Install requirements
