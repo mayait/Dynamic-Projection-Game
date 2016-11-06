@@ -14,11 +14,9 @@
  - OSculator 3.0		https://osculator.net/						OSX Wiimote - OSC mesage Broker
 
  */
-
 /**
  Comentarios:
-   - Modificada la posición de la cámara para que coincida con
-     el POV del wiimote.
+   - Animación integrada
  */
  
 // Include statements for the library
@@ -32,19 +30,24 @@ NetAddress myRemoteLocation;
 IRCoordinates IRC;
 Accelerometer ACC;
 Buttons BUTT;
-int camZ = 800;
+int camZ, frame;
+PImage[] imgs;
+float theta;
 
 // Declare constants
-public static final int IMG_WIDTH = 1600;
-public static final int IMG_HEIGHT = 1200;
+public static final int IMG_WIDTH = 500;
+public static final int IMG_HEIGHT = 500;
 public static final int FR = 20;
 public static final int PORT = 9000;
+public static final int OSCL = 100;
+public static final int OSCL_X = 100;
+public static final int OSCL_Y = 105;
 
 // Sets the initial conditions
 public void setup(){
-  // Sets processing window to 800 x 600 and render in 
+  // Sets processing window to full screen.
   // Processing 3D (P3D).
-  size(800 , 600, P3D); 
+  fullScreen(P3D,1);
   // Frames to be displayed every second
   frameRate(FR); 
   // Sets the background to black.
@@ -56,19 +59,19 @@ public void setup(){
   IRC = new IRCoordinates();
   ACC = new Accelerometer();
   BUTT = new Buttons();
+  imgs = new PImage[4];
+  camZ = 800;
+  frame = 0;
+  theta = 0;
 }
 
 public void draw(){
-  // Specifies an amount to displace objects within the 
-  // display window. The x parameter specifies left/right 
-  // translation, the y parameter specifies up/down translation.
-  // translate(width/2, height/2); 
   // Sets the background to black with every new call to 
   // draw() otherwise the previous image would still 
   // be displayed.
   background(0); 
-  // Loads an image into a variable of type PImage.
-  PImage img = loadImage("images/textura3.jpg");
+  // Loads the animation images into the variable img.
+  loadImages();
   // Disables drawing the stroke (outline). 
   noStroke();
   // Sets the default ambient and directional light.
@@ -81,8 +84,9 @@ public void draw(){
   camera(IRC.getIRAux().x * width, IRC.getIRAux().y * height, camZ,
          IRC.getIRAux().x * width, IRC.getIRAux().y * height, 0.0,
          0.0, 1.0, 0.0);
-
-  texturiseImage(img);
+  
+  PVector XY = generateOscilation();
+  texturiseImages(imgs, XY);
   drawAllPoints();
   drawWiimote();
 }
@@ -159,15 +163,30 @@ private void readACC(OscMessage theOscMessage){
   }
 }
 
-private void texturiseImage(PImage img){
+private void loadImages(){
+  imgs [0] = loadImage("cubic_0003.gif");
+  imgs [1] = loadImage("cubic_0004.gif");
+  imgs [2] = loadImage("cubic_0005.gif");
+  imgs [3] = loadImage("cubic_0006.gif");
+}
+
+private PVector generateOscilation(){
+  //Load image sequence
+  frame = (frame+1) % 4;
+  theta += 0.1;
+  // Returns oscillating values
+  return new PVector((sin(theta)) * OSCL, (cos(theta)) * OSCL);  
+}
+
+private void texturiseImages(PImage[] img, PVector XY){
   // beginShape() begins recording vertices for a shape.
   beginShape();
   // Sets a texture to be applied to vertex points.
-  texture(img);
-  vertex(-width, -height, 0, 0, 0);
-  vertex(width, -height, 0, IMG_WIDTH, 0);
-  vertex(width, height, 0, IMG_WIDTH, IMG_HEIGHT);
-  vertex(-width, height, 0, 0, IMG_HEIGHT);
+  texture(imgs[frame]);
+  vertex(-OSCL_X+XY.x, OSCL_Y-XY.y, 0, 0, IMG_HEIGHT);
+  vertex(OSCL_X+XY.x, OSCL_Y-XY.y, 0, IMG_WIDTH, IMG_HEIGHT);
+  vertex(OSCL_X+XY.x, -OSCL_Y-XY.y, 0, IMG_WIDTH, 0);
+  vertex(-OSCL_X+XY.x, -OSCL_Y-XY.y, 0, 0, 0);
   // endShape() stops recording vertices for a shape.
   endShape();
 }
