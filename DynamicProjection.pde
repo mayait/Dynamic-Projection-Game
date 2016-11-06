@@ -17,6 +17,9 @@
 /**
  Comentarios:
    - Animación integrada
+   - Target integrado
+   - Background integrado
+   - Campo de exploración ampliado
  */
  
 // Include statements for the library
@@ -31,17 +34,19 @@ IRCoordinates IRC;
 Accelerometer ACC;
 Buttons BUTT;
 int camZ, frame;
+PImage bgImg, trg;
 PImage[] imgs;
+PVector POV;
 float theta;
 
 // Declare constants
-public static final int IMG_WIDTH = 500;
-public static final int IMG_HEIGHT = 500;
+public static final int IMG_WIDTH = 50;
+public static final int IMG_HEIGHT = 50;
 public static final int FR = 20;
 public static final int PORT = 9000;
-public static final int OSCL = 100;
-public static final int OSCL_X = 100;
-public static final int OSCL_Y = 105;
+public static final int OSCL = 50;
+public static final int OSCL_X =50;
+public static final int OSCL_Y = 55;
 
 // Sets the initial conditions
 public void setup(){
@@ -63,6 +68,8 @@ public void setup(){
   camZ = 800;
   frame = 0;
   theta = 0;
+  bgImg = loadImage("images/haunted_house3.jpg");
+  trg = loadImage("images/target.png");
 }
 
 public void draw(){
@@ -81,14 +88,17 @@ public void draw(){
   // Sets the position of the camera through setting the eye 
   // position, the center of the scene, and which axis is facing 
   // upward.
-  camera(IRC.getIRAux().x * width, IRC.getIRAux().y * height, camZ,
-         IRC.getIRAux().x * width, IRC.getIRAux().y * height, 0.0,
+  normalisePOV();
+  camera(POV.x, POV.y, camZ,
+         POV.x, POV.y, 0.0,
          0.0, 1.0, 0.0);
   
   PVector XY = generateOscilation();
+  texturiseBgImage(bgImg);
   texturiseImages(imgs, XY);
-  drawAllPoints();
-  drawWiimote();
+  texturiseTarget(trg);
+  //drawAllPoints();
+  //drawWiimote();
 }
 
 /*
@@ -168,16 +178,45 @@ private void loadImages(){
   imgs [1] = loadImage("cubic_0004.gif");
   imgs [2] = loadImage("cubic_0005.gif");
   imgs [3] = loadImage("cubic_0006.gif");
+  
+  for (int i = 0; i < 4; i++){
+   imgs[i].resize(IMG_WIDTH, IMG_HEIGHT);
+  }
 }
 
+/**
+  Loads image sequences and generates oscilation values.
+ */
 private PVector generateOscilation(){
-  //Load image sequence
   frame = (frame+1) % 4;
   theta += 0.1;
-  // Returns oscillating values
   return new PVector((sin(theta)) * OSCL, (cos(theta)) * OSCL);  
 }
 
+/**
+  Renders target image.
+ */
+private void texturiseTarget(PImage trg){
+  trg.resize(50, 50);
+  image(trg, POV.x - trg.width/2, POV.y - trg.height/2);
+}
+
+/**
+  Renders background image.
+ */
+private void texturiseBgImage(PImage bgImg){
+  beginShape();
+  texture(bgImg);
+  vertex(-width, -height, 0, 0, 0);
+  vertex(width, -height, 0, bgImg.width, 0);
+  vertex(width, height, 0, bgImg.width, bgImg.height);
+  vertex(-width, height, 0, 0, bgImg.height);
+  endShape();
+}
+
+/**
+  Renders animation.
+ */
 private void texturiseImages(PImage[] img, PVector XY){
   // beginShape() begins recording vertices for a shape.
   beginShape();
@@ -191,32 +230,48 @@ private void texturiseImages(PImage[] img, PVector XY){
   endShape();
 }
 
+/**
+  Normalises the POV position to fit the size of the screen.
+ */
+private void normalisePOV(){
+  POV = new PVector(IRC.getIRAux().x * (width * 2), 
+                    IRC.getIRAux().y * (height * 2));
+}
+
+/**
+  Zooms in and out depending of buttons + and -.
+    - Less zoom means the distance is larger.
+    - More zoom means the distance is shorter.
+ */
 private void zoom(){
-  // Less zoom means the distance is larger.
   if(BUTT.isMinus()){
     camZ = camZ+10;
     BUTT.setMinus(false);
   }  
-  // More zoom means the distance is shorter.
   if(BUTT.isPlus()){
     camZ = camZ-10;
     BUTT.setPlus(false);
   }
 }
 
+/**
+  Draws points given coordinates X and Y.
+    - Sets the width of the stroke. All widths are set in units of pixels.
+    - Draws a point, a coordinate in space at the dimension of one pixel. 
+ */
 private void drawPoint (String s, float x, float y, int i){
-  // Sets the width of the stroke. All widths are set in units of 
-  // pixels.
   strokeWeight(10);
-  // Draws a point, a coordinate in space at the dimension of one 
-  // pixel. 
-  point(x * width, y * height);
+  point(x * (width * 2), y * (height * 2));
   //textSize(32);
   //text(s+" \t x:"+x+"\t y:"+y, 200, i*50-200);
 }
 
+/**
+  Displays POV, IR_1 and IR_2 positions.
+    - Sets the color used to draw lines and borders around shapes. 
+    - Calls drawPoint() method.
+ */
 private void drawAllPoints(){
-  // Sets the color used to draw lines and borders around shapes. 
   stroke(240, 240, 240); // Grey
   drawPoint("ir", IRC.getIRAux().x, IRC.getIRAux().y, 1);
   stroke(256, 0, 0); // Red
@@ -225,12 +280,15 @@ private void drawAllPoints(){
   drawPoint("ir2", IRC.getIR2().x, IRC.getIR2().y, 3);
 }
 
+/**
+  Displays wiimote position and rotation.
+    - Sets backward translation of 400 px so that it is in a different 
+      plane than the img.
+    - 
+ */
 private void drawWiimote(){
   stroke(0, 0, 256); // Blue
   strokeWeight(2); 
-  //translate(IRC.getIRAux().x*800, IRC.getIRAux().y*600, 0);
-  // Backward translation of 400 px so that it is in a different 
-  // plane than the img.
   translate(0, 0, 400);
   // The box is given the orientation of the remote in Pitch, Raw, Yaw
   // Pitch -> x, Roll -> y, Yaw -> z.
