@@ -4,16 +4,9 @@
 ![Kidsprojecting](https://github.com/mayait/Dynamic-Projection-Game-Processing/blob/master/images/readme/childs_projecting.png)
 - - - -
 
-###  Authors
+##### Cite as
 
-* _Julian Maya_ julian.maya@gmail.com
-* _Maria Santos_ msantosbaranco@gmail.com 
-* _Guillermo Marin_ guillermo.marin.g@gmail.com  
-
-##### Acknowledgements
-
-* Martí Sànchez.
-* Universitat Pompeu Fabra, Barcelona. _Department of Information and Communication Technologies_ https://www.upf.edu/csim/
+Marín, Guillermo, Maya, Julián, & Santos, Maria. (2016). A novel interactive approach with virtual content in a physical world using small projectors and sensors [Data set]. http://doi.org/10.5281/zenodo.164951
 
 - - - -  
 
@@ -67,7 +60,26 @@ Thus, the game made in Processing makes a constant mapping between the real worl
 
 - - - -  
 
-### MIT License
+#  Authors
+
+* _Julian Maya_ julian.maya@gmail.com
+* _Maria Santos_ msantosbaranco@gmail.com 
+* _Guillermo Marin_ guillermo.marin.g@gmail.com  
+
+##### Acknowledgements
+
+* Martí Sànchez.
+* Universitat Pompeu Fabra, Barcelona. _Department of Information and Communication Technologies_ https://www.upf.edu/csim/
+
+##### Digital Object Identifiers
+
+In case you make use of Dynamic Projection Game in your research publication, please use the DOI below as a reference.
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.164951.svg)](https://doi.org/10.5281/zenodo.164951)
+
+- - - -  
+
+# MIT License
 
 Copyright (c) 2016 Marín, Guillermo. Maya, Julián. Santos, Maria. 
 
