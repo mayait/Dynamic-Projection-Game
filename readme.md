@@ -9,7 +9,9 @@
 * _Julian Maya_ julian.maya@gmail.com
 * _Maria Santos_ msantosbaranco@gmail.com 
 * _Guillermo Marin_ guillermo.marin.g@gmail.com  
-* Universitat Pompeu Fabra, Barcelona. _Department of Information and Communication Technologies_
+#### Acknowledgements
+* Martí Sànchez. (Advanced Interface Design Prof.)
+* Universitat Pompeu Fabra, Barcelona. _Department of Information and Communication Technologies_ https://www.upf.edu/csim/
 
 - - - -  
 
