@@ -30,12 +30,13 @@
 1. Clone or download github master
 2. Install requirements
 3. Create infra-red light emitter. You can use the wii sensor bar as well
-  You need at least two IR emitter spots on the wall, we made two ligh spots with four IR led each one. Each spot was separated 20cm.
-  wiimote built-in infrared camera track x,y position of up to 4 IR light blobs and report its coordenates in X,Y  
+  * You need at least two IR emitter spots on the wal
+  * We made two light spots with four IR leds each one.
+  * wiimote built-in infrared camera tracks x,y position of up to 4 IR light blobs  
   ![wiisensor](https://github.com/mayait/Dynamic-Projection-Game-Processing/blob/master/images/readme/wiisensor.png)
 4. Pair wiimote with Osculator
 5. Load osculator config file /OSCulator_Presets.oscd (just double click it)
 6. Open DynamicProjection.pde file on processing
-	By default it runs full screen in a second display, you can change this behavior searching the line fullScreen(P3D, 1);
+ By default it runs full screen in a second display, you can change this behavior searching the line fullScreen(P3D, 1);
 7. Have fun, fork it
 8. Arts of the game included in .psd photohop files for the animation sprites in /images/invader/masters/*psd
