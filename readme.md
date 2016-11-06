@@ -1,6 +1,7 @@
 # Dynamic Projection Game
-### Prototype concept game using small projectors Processing, wiimote and OSC
+
 #### A novel interactive approach with virtual content in a physical world using small projectors and sensors
+### Prototype concept game using small projectors Processing, wiimote and OSC
 ![Kidsprojecting](https://github.com/mayait/Dynamic-Projection-Game-Processing/blob/master/images/readme/childs_projecting.png)
 - - - -
 
