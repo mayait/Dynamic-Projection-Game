@@ -23,6 +23,7 @@
 // Include statements for the library
 import oscP5.*;
 import netP5.*;
+import processing.sound.*;
 
 // Declare variables
 OscP5 oscP5;
@@ -33,7 +34,8 @@ Accelerometer ACC = new Accelerometer();
 Buttons BUTT = new Buttons();
 PImage[] mnstr1 = new PImage[6];
 PImage[] mnstr2 = new PImage[6];
-PImage bgImg, trg, plImg;
+PImage bgImg, trg, plImg, mask;
+SoundFile lasersound;
 PVector POV, MOUSE, RND_POS_1, RND_POS_2;
 //Adaptation
 float angle = 0.5, speed = 0.1;
@@ -42,13 +44,16 @@ int cam_z = 800, scalar = 50, imgsIndex = 0;
 // Declare constants
 public static final int IMG_WIDTH = 100;
 public static final int IMG_HEIGHT = 100;
-public static final int FR = 20;
+public static final int FR = 30; //framerate
 public static final int PORT = 9000;
 public static final int OSCL = 50;
 public static final float PHASE = 100;
 public static final int ZOOM = 10;
 public static final int NUM_FRAMES = 6;
-public static final boolean ISWIIMOTE = true;
+public static final boolean ISWIIMOTE = true; //set it to false for testing purposes
+boolean isInitialSetupFlag = true; //Flag for initial setup, set it true to skip it
+float xMin=0,xMax=0,yMin=0,yMax=0,zStarting=0;
+boolean isZset = false;
 
 // Sets the initial conditions
 public void setup() {
@@ -66,6 +71,7 @@ public void setup() {
   loadImages();
   RND_POS_1 = generateRandomPos();
   RND_POS_2 = generateRandomPos();
+  lasersound = new SoundFile(this, "laser.mp3");
 }
 
 public void draw() {
@@ -81,14 +87,20 @@ public void draw() {
   // position, the center of the scene, and which axis is facing 
   // upward.
   cameraControl(ISWIIMOTE);
-
   PVector [] ANM_POS = generateAnmPos();
-  printBgImage();
-  printAnimations(ANM_POS);
-  printPlImage();
-  printTarget(trg, ISWIIMOTE);
-  isZooming();
-  isShooting(ANM_POS, ISWIIMOTE);
+  
+  if(!isInitialSetupFlag){
+    initialSetup();
+  } else {
+    
+    printBgImage();
+    printAnimations(ANM_POS);
+    printPlImage();
+    printTarget(trg, ISWIIMOTE);
+    printMask(mask,ISWIIMOTE);
+    isZooming();
+    isShooting(ANM_POS, ISWIIMOTE);
+  }
 }
 
 /*
@@ -110,13 +122,19 @@ private void readIRC(OscMessage theOscMessage) {
   // x and y are in a range of 0 to 1. Given that we want a Cartesian
   // place, we substract 0.5 in order to center de image and have a
   // range of -0.5 to 0.5.
+  
   if ( theOscMessage.addrPattern().indexOf("/wii/1/ir/xys/1") != -1 ) {
-    IRC.setIR1(new PVector(theOscMessage.get(0).floatValue()-0.5, 
-      theOscMessage.get(1).floatValue()-0.5));
+    IRC.setIR1(new PVector(
+      theOscMessage.get(0).floatValue()-0.5, 
+      theOscMessage.get(1).floatValue()-0.5)
+     );
   }
+  
   if ( theOscMessage.addrPattern().indexOf("/wii/1/ir/xys/2") != -1 ) {
-    IRC.setIR2(new PVector(theOscMessage.get(0).floatValue()-0.5, 
-      theOscMessage.get(1).floatValue()-0.5));
+    IRC.setIR2(new PVector(
+      theOscMessage.get(0).floatValue()-0.5, 
+      theOscMessage.get(1).floatValue()-0.5)
+    );
   }
 
   // IR: These values represent the x and y coordinates of an 
@@ -170,9 +188,10 @@ private void readACC(OscMessage theOscMessage) {
  Loads and resises the animation images into the variable imgs.
  */
 private void loadImages() {
-  bgImg = loadImage("images/space_BG.gif");
+  bgImg = loadImage("images/space_BG_xxl.jpg");
   plImg = loadImage("images/space_objects.gif");
   trg = loadImage("images/target.png");
+  mask = loadImage("images/lantern_mask_white_3072.gif");
   mnstr1 [0] = loadImage("images/invader/invader_1_0001.gif");
   mnstr1 [1] = loadImage("images/invader/invader_1_0002.gif");
   mnstr1 [2] = loadImage("images/invader/invader_1_0003.gif");
@@ -205,16 +224,16 @@ private PVector generateMotion(float x, float y) {
  Renders background image.
  */
 private void printBgImage() {
-  bgImg.resize(width*2, height*2);
-  image(bgImg, -width, -height);
+  bgImg.resize(width*4, height*4);
+  image(bgImg, -width*2, -height*2);
 }
 
 /**
  Renders planets image.
  */
 private void printPlImage() {
-  plImg.resize(width*2, height*2);
-  image(plImg, -width, -height);
+  //plImg.resize(width*2, height*2);
+  //image(plImg, -width, -height);
 }
 
 private PVector [] generateAnmPos() {
@@ -249,37 +268,116 @@ private void printTarget(PImage trg, boolean iswiimote) {
   }
 }
 
+private void printMask(PImage mask, boolean iswiimote) {
+  trg.resize(50, 50);
+  if (iswiimote) {
+    image(mask, POV.x - mask.width/2, POV.y - mask.height/2);
+  } else {
+    image(mask, MOUSE.x - mask.width/2, MOUSE.y - mask.height/2);
+  }
+}
+
+/**
+Calculate initial conditions to start proyection.
+PVector tp topright, tl topleft, br bottomright, bl bottomleft
+*/
+private void initialSetup (){
+  PVector tr,tl,br,bl;
+  tr = new PVector(0,0);
+  tl = new PVector(0,0);
+  br = new PVector(0,0);
+  bl = new PVector(0,0);
+  boolean setTR = true, setTL = false, setBR = false, setBL = false;
+  
+  textSize(100);
+  fill(0, 102, 153);
+  if (setTR) {
+    background(100);
+    text("SET TOP RIGHT AND PRESS A", width*-0.5+10,0);
+    if (BUTT.isA()) {
+        BUTT.setA(false);
+        tr.set(POV.x,POV.y);
+        setTL = true;
+        setTR = false;
+      }
+  }
+  if (setTL) {
+    background(100);
+    text("SET TOP LEFT AND PRESS A", 0, width*-0.5+10,0);
+    if (BUTT.isA()) { 
+        BUTT.setA(false);
+        tl.set(POV.x,POV.y);
+        setBR = true;
+        setTL = false;
+      }
+  }
+  if (setBR) {
+    background(100);
+    text("SET BOTTOM RIGHT AND PRESS A", 0, width*-0.5+10,0);
+    if (BUTT.isA()) {
+        BUTT.setA(false);
+        br.set(POV.x,POV.y);
+        setBL = true;
+        setBR = false;
+      }
+  }
+  if (setBL){
+    background(100);
+    text("SET BOTTOM LEFT AND PRESS A", 0, width*-0.5+10,0);
+    if (BUTT.isA()) {
+        BUTT.setA(false);
+        bl.set(POV.x,POV.y);
+        setBL = false;
+        
+        isInitialSetupFlag = true; 
+        background(51);
+        xMin = (br.x+bl.x)/2;
+        xMax = (tr.x+tl.x)/2;
+        yMin = (tr.y+br.y)/2;
+        yMax = (tl.y+bl.y)/2;
+        text("xMin="+xMin+"\n"+
+             "xMax="+xMax+"\n"+
+             "yMin="+yMin+"\n"+
+             "yMax="+yMax
+             , 0, 0);
+        delay(30000);
+    }
+    
+  }
+
+}
+
 /**
  Allows to control navigation with the Wiimote or mouse:
  - True: wiimote
  - False: mouse
  */
-private void cameraControl(boolean isWiimote) {
-  PVector aux = setAuxVector(isWiimote);
-  camera(aux.x, aux.y, cam_z, 
+private void cameraControl(boolean wiimote) {
+  PVector aux;
+  if (wiimote) {
+    normalisePOV();
+    aux = new PVector(POV.x, POV.y);
+  } else {
+    normaliseMousePos();
+    aux = new PVector(MOUSE.x, MOUSE.y);
+  }
+  camera(aux.x, aux.y, cam_z-(POV.z*5), 
     aux.x, aux.y, 0.0, 
     0.0, 1.0, 0.0);
 }
 
 /**
-  Normalises the cursor position and returns it depending on whether it is
-  the Mouse or the Wiimote.
- */
-private PVector setAuxVector(boolean isWiimote) {
-  if (isWiimote) {
-    normalisePOV();
-    return new PVector(POV.x, POV.y);
-  } else {
-    normaliseMousePos();
-    return new PVector(MOUSE.x, MOUSE.y);
-  }
-}
-/**
  Normalises the POV position to fit the size of the screen.
  */
 private void normalisePOV() {
-  POV = new PVector(IRC.getIRAux().x * (width * 2), 
-    IRC.getIRAux().y * (height * 2));
+  if (!isZset){
+    zStarting=IRC.getIRAux().z;
+    isZset = true;
+  }   
+  POV = new PVector(  IRC.getIRAux().x * 2*width, 
+                      IRC.getIRAux().y * 2*height,
+                      IRC.getIRAux().z - zStarting
+                      );
 }
 
 /**
@@ -311,6 +409,7 @@ private void isZooming() {
  - Draws a point, a coordinate in space at the dimension of one pixel. 
  */
 private void drawPoint (String s, float x, float y, int i) {
+  //stroke(256, 0, 0);
   strokeWeight(10);
   point(x * (width * 2), y * (height * 2));
   //textSize(32);
@@ -369,26 +468,23 @@ private float posPhase(float var) {
   return var - PHASE;
 }
 
-/**
- Given the animation image position and the cursor type, calls method 
- isShooting(x, y, imgs, i, isWiimote);
- */
 private void isShooting(PVector [] ANM_POS, boolean isWiimote) {
-  isShooting(ANM_POS[0].x, ANM_POS[0].y, mnstr1, 1, isWiimote);
-  stroke(256, 256, 256); // White
-  point(ANM_POS[0].x+50, ANM_POS[0].y+50);
   isShooting(ANM_POS[1].x, ANM_POS[1].y, mnstr2, 2, isWiimote);
+  isShooting(ANM_POS[0].x, ANM_POS[0].y, mnstr1, 1, isWiimote);
 }
 
-/**
- If the shooting button is pressed, calls methos containsPOV(aux, x y, imgs)
- and if true, generates a new animation image position.
- */
 private void isShooting(float x, float y, PImage[] imgs, int i, boolean isWiimote) {
-  if (BUTT.isA() || mousePressed) {
-    stroke(256, 256, 256); // White
+  if (BUTT.isB() || mousePressed) {
+    stroke(256, 256, 256); // Green
     strokeWeight(20);
-    PVector aux = setAuxVector(isWiimote);
+    
+    lasersound.play();
+    PVector aux;
+    if (isWiimote) {
+      aux = new PVector(POV.x, POV.y);
+    } else {
+      aux = new PVector(MOUSE.x, MOUSE.y);
+    }
     point(aux.x, aux.y);
     if (containsPOV(aux, x, y, imgs)) {
       if (i == 1) {
@@ -397,13 +493,10 @@ private void isShooting(float x, float y, PImage[] imgs, int i, boolean isWiimot
         RND_POS_2 = generateRandomPos();
       }
     }
-    BUTT.setA(false);
+    BUTT.setB(false);
   }
 }
 
-/**
- Checks if the coursour position is within the range of the animation image.
- */
 private boolean containsPOV(PVector aux, float x, float y, PImage[] imgs) {
   boolean isContained = false;
   if ((aux.x >= x-imgs[0].width/2 && aux.x <= x+imgs[0].width/2) && 

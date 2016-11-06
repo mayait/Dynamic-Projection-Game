@@ -40,6 +40,12 @@ public class IRCoordinates{
   }
 
   public void setIRAux(PVector IRAux_) {
-    IRAux = IRAux_;
+    //IRAux = IRAux_; //Auxiliar original de Maria.
+    //En este experimento incluyo un valor de Z.
+    float x = IRAux_.x;
+    float y = IRAux_.y;
+    float z = sqrt(pow((IR1.x-IR2.x),2)+pow((IR1.y-IR2.y),2));
+    IRAux.set (x,y,z);
+    
   }
 }
