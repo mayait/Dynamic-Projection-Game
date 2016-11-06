@@ -9,7 +9,7 @@
 * _Julian Maya_ julian.maya@gmail.com
 * _Maria Santos_ msantosbaranco@gmail.com 
 * _Guillermo Marin_ guillermo.marin.g@gmail.com  
-Universitat Pompeu Fabra, Barcelona. Department of Information and Communication Technologies 
+* Universitat Pompeu Fabra, Barcelona. _Department of Information and Communication Technologies_
 
 - - - -  
 
