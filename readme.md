@@ -5,9 +5,10 @@
 ![Kidsprojecting](https://github.com/mayait/Dynamic-Projection-Game-Processing/blob/master/images/readme/childs_projecting.png)
 
 
-# Cite as
+## Cite as / Sharing
 
 _Marín, Guillermo, Maya, Julián, & Santos, Maria. (2016). A novel interactive approach with virtual content in a physical world using small projectors and sensors [Data set]. http://doi.org/10.5281/zenodo.164951_
+
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.164951.svg)](https://doi.org/10.5281/zenodo.164951)
 
 
