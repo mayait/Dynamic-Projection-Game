@@ -14,11 +14,6 @@
  - OSculator 3.0		https://osculator.net/						OSX Wiimote - OSC mesage Broker
 
  */
-/**
- Comentarios:
- - Funcionalidad de matar monstruitos.
- - Reaparecen en otro sitio aleatoriamente.
- */
 
 // Include statements for the library
 import oscP5.*;
@@ -35,11 +30,12 @@ Buttons BUTT = new Buttons();
 PImage[] mnstr1 = new PImage[6];
 PImage[] mnstr2 = new PImage[6];
 PImage bgImg, trg, plImg, mask;
-SoundFile lasersound;
+SoundFile lasersound,coin;
 PVector POV, MOUSE, RND_POS_1, RND_POS_2;
 //Adaptation
 float angle = 0.5, speed = 0.1;
-int cam_z = 800, scalar = 50, imgsIndex = 0;
+int scalar = 50, imgsIndex = 0, score=0;
+float cam_z = 800;
 
 // Declare constants
 public static final int IMG_WIDTH = 100;
@@ -52,7 +48,7 @@ public static final int ZOOM = 10;
 public static final int NUM_FRAMES = 6;
 public static final boolean ISWIIMOTE = true; //set it to false for testing purposes
 boolean isInitialSetupFlag = true; //Flag for initial setup, set it true to skip it
-float xMin=0,xMax=0,yMin=0,yMax=0,zStarting=0;
+float xMin=0, xMax=0, yMin=0, yMax=0, zStarting=0;
 boolean isZset = false;
 
 // Sets the initial conditions
@@ -72,6 +68,7 @@ public void setup() {
   RND_POS_1 = generateRandomPos();
   RND_POS_2 = generateRandomPos();
   lasersound = new SoundFile(this, "laser.mp3");
+  coin = new SoundFile(this, "coin.wav");
 }
 
 public void draw() {
@@ -88,16 +85,16 @@ public void draw() {
   // upward.
   cameraControl(ISWIIMOTE);
   PVector [] ANM_POS = generateAnmPos();
-  
-  if(!isInitialSetupFlag){
+
+  if (!isInitialSetupFlag) {
     initialSetup();
   } else {
-    
+
     printBgImage();
     printAnimations(ANM_POS);
     printPlImage();
     printTarget(trg, ISWIIMOTE);
-    printMask(mask,ISWIIMOTE);
+    printMask(mask, ISWIIMOTE);
     isZooming();
     isShooting(ANM_POS, ISWIIMOTE);
   }
@@ -122,19 +119,19 @@ private void readIRC(OscMessage theOscMessage) {
   // x and y are in a range of 0 to 1. Given that we want a Cartesian
   // place, we substract 0.5 in order to center de image and have a
   // range of -0.5 to 0.5.
-  
+
   if ( theOscMessage.addrPattern().indexOf("/wii/1/ir/xys/1") != -1 ) {
     IRC.setIR1(new PVector(
       theOscMessage.get(0).floatValue()-0.5, 
       theOscMessage.get(1).floatValue()-0.5)
-     );
+      );
   }
-  
+
   if ( theOscMessage.addrPattern().indexOf("/wii/1/ir/xys/2") != -1 ) {
     IRC.setIR2(new PVector(
       theOscMessage.get(0).floatValue()-0.5, 
       theOscMessage.get(1).floatValue()-0.5)
-    );
+      );
   }
 
   // IR: These values represent the x and y coordinates of an 
@@ -278,73 +275,71 @@ private void printMask(PImage mask, boolean iswiimote) {
 }
 
 /**
-Calculate initial conditions to start proyection.
-PVector tp topright, tl topleft, br bottomright, bl bottomleft
-*/
-private void initialSetup (){
-  PVector tr,tl,br,bl;
-  tr = new PVector(0,0);
-  tl = new PVector(0,0);
-  br = new PVector(0,0);
-  bl = new PVector(0,0);
+ Calculate initial conditions to start proyection.
+ PVector tp topright, tl topleft, br bottomright, bl bottomleft
+ */
+private void initialSetup () {
+  PVector tr, tl, br, bl;
+  tr = new PVector(0, 0);
+  tl = new PVector(0, 0);
+  br = new PVector(0, 0);
+  bl = new PVector(0, 0);
   boolean setTR = true, setTL = false, setBR = false, setBL = false;
-  
+
   textSize(100);
   fill(0, 102, 153);
   if (setTR) {
     background(100);
-    text("SET TOP RIGHT AND PRESS A", width*-0.5+10,0);
+    text("SET TOP RIGHT AND PRESS A", width*-0.5+10, 0);
     if (BUTT.isA()) {
-        BUTT.setA(false);
-        tr.set(POV.x,POV.y);
-        setTL = true;
-        setTR = false;
-      }
+      BUTT.setA(false);
+      tr.set(POV.x, POV.y);
+      setTL = true;
+      setTR = false;
+    }
   }
   if (setTL) {
     background(100);
-    text("SET TOP LEFT AND PRESS A", 0, width*-0.5+10,0);
+    text("SET TOP LEFT AND PRESS A", 0, width*-0.5+10, 0);
     if (BUTT.isA()) { 
-        BUTT.setA(false);
-        tl.set(POV.x,POV.y);
-        setBR = true;
-        setTL = false;
-      }
+      BUTT.setA(false);
+      tl.set(POV.x, POV.y);
+      setBR = true;
+      setTL = false;
+    }
   }
   if (setBR) {
     background(100);
-    text("SET BOTTOM RIGHT AND PRESS A", 0, width*-0.5+10,0);
+    text("SET BOTTOM RIGHT AND PRESS A", 0, width*-0.5+10, 0);
     if (BUTT.isA()) {
-        BUTT.setA(false);
-        br.set(POV.x,POV.y);
-        setBL = true;
-        setBR = false;
-      }
-  }
-  if (setBL){
-    background(100);
-    text("SET BOTTOM LEFT AND PRESS A", 0, width*-0.5+10,0);
-    if (BUTT.isA()) {
-        BUTT.setA(false);
-        bl.set(POV.x,POV.y);
-        setBL = false;
-        
-        isInitialSetupFlag = true; 
-        background(51);
-        xMin = (br.x+bl.x)/2;
-        xMax = (tr.x+tl.x)/2;
-        yMin = (tr.y+br.y)/2;
-        yMax = (tl.y+bl.y)/2;
-        text("xMin="+xMin+"\n"+
-             "xMax="+xMax+"\n"+
-             "yMin="+yMin+"\n"+
-             "yMax="+yMax
-             , 0, 0);
-        delay(30000);
+      BUTT.setA(false);
+      br.set(POV.x, POV.y);
+      setBL = true;
+      setBR = false;
     }
-    
   }
+  if (setBL) {
+    background(100);
+    text("SET BOTTOM LEFT AND PRESS A", 0, width*-0.5+10, 0);
+    if (BUTT.isA()) {
+      BUTT.setA(false);
+      bl.set(POV.x, POV.y);
+      setBL = false;
 
+      isInitialSetupFlag = true; 
+      background(51);
+      xMin = (br.x+bl.x)/2;
+      xMax = (tr.x+tl.x)/2;
+      yMin = (tr.y+br.y)/2;
+      yMax = (tl.y+bl.y)/2;
+      text("xMin="+xMin+"\n"+
+        "xMax="+xMax+"\n"+
+        "yMin="+yMin+"\n"+
+        "yMax="+yMax
+        , 0, 0);
+      //delay(30000);
+    }
+  }
 }
 
 /**
@@ -352,32 +347,42 @@ private void initialSetup (){
  - True: wiimote
  - False: mouse
  */
-private void cameraControl(boolean wiimote) {
-  PVector aux;
-  if (wiimote) {
-    normalisePOV();
-    aux = new PVector(POV.x, POV.y);
-  } else {
-    normaliseMousePos();
-    aux = new PVector(MOUSE.x, MOUSE.y);
-  }
-  camera(aux.x, aux.y, cam_z-(POV.z*5), 
+private void cameraControl(boolean isWiimote) {
+  PVector aux = setAuxVector(isWiimote);
+  camera(aux.x, aux.y, cam_z/*+(POV.z*500)*/, 
     aux.x, aux.y, 0.0, 
     0.0, 1.0, 0.0);
+    //println(POV.z);
+}
+
+
+/**
+ Normalises the cursor position and returns it depending on whether it is
+ the Mouse or the Wiimote.
+ */
+private PVector setAuxVector(boolean isWiimote) {
+  if (isWiimote) {
+    normalisePOV();
+    return new PVector(POV.x, POV.y);
+  } else {
+    normaliseMousePos();
+    return new PVector(MOUSE.x, MOUSE.y);
+  }
 }
 
 /**
  Normalises the POV position to fit the size of the screen.
  */
 private void normalisePOV() {
-  if (!isZset){
-    zStarting=IRC.getIRAux().z;
+  float z = sqrt(pow((IRC.getIR1().x-IRC.getIR2().x),2)+pow((IRC.getIR1().y-IRC.getIR2().y),2));
+  if (!isZset) {
+    zStarting=z;
     isZset = true;
   }   
   POV = new PVector(  IRC.getIRAux().x * 2*width, 
-                      IRC.getIRAux().y * 2*height,
-                      IRC.getIRAux().z - zStarting
-                      );
+    IRC.getIRAux().y * 2*height, 
+    z - zStarting
+    );
 }
 
 /**
@@ -468,39 +473,41 @@ private float posPhase(float var) {
   return var - PHASE;
 }
 
+/**
+ If the shooting button is pressed, calls methos containsPOV(aux, x y, imgs)
+ and if true, generates a new animation image position.
+ */
 private void isShooting(PVector [] ANM_POS, boolean isWiimote) {
-  isShooting(ANM_POS[1].x, ANM_POS[1].y, mnstr2, 2, isWiimote);
-  isShooting(ANM_POS[0].x, ANM_POS[0].y, mnstr1, 1, isWiimote);
-}
-
-private void isShooting(float x, float y, PImage[] imgs, int i, boolean isWiimote) {
-  if (BUTT.isB() || mousePressed) {
+  if (BUTT.isA() || mousePressed) {
     stroke(256, 256, 256); // Green
-    strokeWeight(20);
-    
+    strokeWeight(20);  
     lasersound.play();
-    PVector aux;
-    if (isWiimote) {
-      aux = new PVector(POV.x, POV.y);
-    } else {
-      aux = new PVector(MOUSE.x, MOUSE.y);
-    }
+    PVector aux = setAuxVector(isWiimote);
     point(aux.x, aux.y);
-    if (containsPOV(aux, x, y, imgs)) {
-      if (i == 1) {
-        RND_POS_1 = generateRandomPos();
-      } else {
-        RND_POS_2 = generateRandomPos();
-      }
+    if (containsPOV(aux, ANM_POS[0], mnstr1)) {
+      coin.play();
+      //delay(1000);
+      RND_POS_1 = generateRandomPos();
+      score=score+1;
+      println(score);
+    } else if (containsPOV(aux, ANM_POS[1], mnstr2)) {
+      coin.play();
+      //delay(1000);
+      RND_POS_2 = generateRandomPos();
+      score=score+1;
+      println(score);
     }
-    BUTT.setB(false);
+    BUTT.setA(false);
   }
 }
 
-private boolean containsPOV(PVector aux, float x, float y, PImage[] imgs) {
+/**
+ Checks if the coursour position is within the range of the animation image.
+ */
+private boolean containsPOV(PVector aux, PVector ANM_POS, PImage[] imgs) {
   boolean isContained = false;
-  if ((aux.x >= x-imgs[0].width/2 && aux.x <= x+imgs[0].width/2) && 
-    (aux.y >= y-imgs[0].height/2 && aux.y <= y+imgs[0].height/2)) {
+  if ((aux.x >= ANM_POS.x-imgs[0].width/2 && aux.x <= ANM_POS.x+imgs[0].width/2) && 
+    (aux.y >= ANM_POS.y-imgs[0].height/2 && aux.y <= ANM_POS.y+imgs[0].height/2)) {
     stroke(256, 0, 0); // Green
     strokeWeight(20);
     point(aux.x, aux.y);

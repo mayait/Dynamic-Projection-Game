@@ -1,3 +1,21 @@
+/**
+
+ DynamicProjectionGame
+ Julian Maya, Maria Santos & Guillermo Marin
+ julian.maya@gmail.com, msantosbaranco@gmail.com, guillermo.marin.g@gmail.com 
+
+ A novel interactive approach with virtual content in a physical world using small projectors and sensors. 
+ Advanced Interface Design Project: Dynamic Projection
+ Exploring physical space using small projectors, Processing, wiimote and OSC
+ 
+ Requirements:
+ - Processing 3.2.2 	https://processing.org/				
+ - OScP5 				https://doi.org/10.5281/zenodo.16308		An Open Sound Control (OSC) implementation for Java and Processing
+ - OSculator 3.0		https://osculator.net/						OSX Wiimote - OSC mesage Broker
+
+ */
+
+
 
 public class Buttons{
   
