@@ -5,13 +5,13 @@
 ![Kidsprojecting](https://github.com/mayait/Dynamic-Projection-Game-Processing/blob/master/images/readme/childs_projecting.png)
 - - - -
 
-### Cite as
+## Cite as
 
 _Marín, Guillermo, Maya, Julián, & Santos, Maria. (2016). A novel interactive approach with virtual content in a physical world using small projectors and sensors [Data set]. http://doi.org/10.5281/zenodo.164951_
-
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.164951.svg)](https://doi.org/10.5281/zenodo.164951)
 - - - -  
 
-###  Description
+##  Description
 
 This is a visual search-task shooter game where the user has to explore a hidden virtual world (space) revealed by the projector, looking for space invaders.
 This software is a proof of concept prototype of an interface for augmented reality paradigm named the world as a support WaS. Where the user uses the surface of the real world (wall) to explore and reveal a virtual environment by the projection.
@@ -28,15 +28,13 @@ Thus, the game made in Processing makes a constant mapping between the real worl
 
 - - - -  
 
-###  Requirements
+##  Requirements
 
 * Processing 3.2.2 		
-  https://processing.org/	
-  			
+  https://processing.org/	 			
 * OScP5 (OSX only) 				
   https://doi.org/10.5281/zenodo.16308		
   An Open Sound Control (OSC) implementation for Java and Processing
-  
 * OSculator 3.0			
   https://osculator.net/						
   OSX Wiimote - OSC mesage Broker
