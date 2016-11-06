@@ -39,4 +39,4 @@
 6. Open DynamicProjection.pde file on processing
  By default it runs full screen in a second display, you can change this behavior searching the line fullScreen(P3D, 1);
 7. Have fun, fork it
-8. Arts of the game included in .psd photohop files for the animation sprites in /images/invader/masters/*psd
+8. Game arts and animation sprites sources are included in .psd photohop files in /images/invader/masters/*.psd
